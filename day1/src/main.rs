@@ -3,7 +3,7 @@ use std::fs::File;
 use std::vec::Vec;
 
 fn main() {
-    let file = File::open("d1p1.txt").expect("Should have been able to open file.");
+    let file = File::open("input.txt").expect("Should have been able to open file.");
     let reader = BufReader::new(file);
 
     let mut elfindex: usize = 0;
