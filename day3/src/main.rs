@@ -12,21 +12,38 @@ fn main() {
 
     let inputfile = File::open("input.txt").unwrap();
     let reader = BufReader::new(inputfile);
-
     let mut sum = 0;
+    let mut badgesum = 0;
 
-    for line in reader.lines() {
-        let rline = line.unwrap();
-        let (first, second) = rline.split_at(rline.chars().count() / 2);
-        assert!(first.chars().count() == second.chars().count());
+    let lines = reader.lines().map(|l| l.unwrap()).collect::<Vec<String>>();
+    let linechunks = lines.chunks(3);
+    
 
-        for c in first.split("") {
-            if c != "" && second.contains(c) {
-                sum += prioritymap.get(c).unwrap();
+    for chunk in linechunks {
+        assert!(chunk.len() == 3);
+
+        for c in chunk[0].split("") {
+            if c != "" && chunk[1].contains(c) && chunk[2].contains(c) {
+                badgesum += prioritymap.get(c).unwrap();
                 break;
             }
-        } 
-    }
+        }
 
+        for line in chunk {
+            let tline = line.clone();
+            
+            let (first, second) = tline.split_at(tline.chars().count() / 2);
+            assert!(first.chars().count() == second.chars().count());
+
+            for c in first.split("") {
+                if c != "" && second.contains(c) {
+                    sum += prioritymap.get(c).unwrap();
+                    break;
+                }
+            } 
+        }
+    }
     println!("The sum of priorities is {}", sum);
+    println!("The sum of badges is {}", badgesum);
+
 }
