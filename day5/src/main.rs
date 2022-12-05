@@ -12,6 +12,8 @@ macro_rules! parse_move_line {
 }
 
 fn main() {
+    let solution_number = 2;
+
     let file = File::open("input.txt").unwrap();
     let reader = BufReader::new(file);
 
@@ -67,14 +69,26 @@ fn main() {
         // appropriately map the numbers to their roles
         let (n, s1, s2) = (numbers[0], numbers[1] - 1, numbers[2] - 1);
         
-        // for each of the n crates to move,
-        for _ in 0..n {
+        if solution_number == 1 {
+            // for each of the n crates to move,
+            for _ in 0..n {
 
-            // move them, if you can, panic (bad input) if you can't.
-            match stacks[s1].pop() {
+                // move them, if you can, panic (bad input) if you can't.
+                match stacks[s1].pop() {
+                    Some(c) => stacks[s2].push(c),
+                    None => panic!("Tried to remove something that wasn't there."),
+                }
+            }
+        } else {
+            let mut transfer: Vec<String> = Vec::new();
+            (0..n).for_each(|_| match stacks[s1].pop() {
+                Some(c) => transfer.push(c),
+                None => panic!("Tried to remove something that wasn't there."),
+            });
+            (0..n).for_each(|_| match transfer.pop() {
                 Some(c) => stacks[s2].push(c),
                 None => panic!("Tried to remove something that wasn't there."),
-            }
+            });
         }
     }
 
