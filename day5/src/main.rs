@@ -33,7 +33,9 @@ fn main() {
     // for every line of crats, but in reverse (i.e. floor 1..n)
     for line in cratelines.iter().rev().skip(1) {
 
-        // for every "floor" of crates, grab every set of 3 chars (i.e. "   " or "[X]") and convert those to a string
+        // for every "floor" of crates, grab every set of 3 chars (i.e. "   " or "[X]") and convert those to a string.
+        // Note that for every char, if it occurs in a 1-based-index divisible by 4, it is a separator.
+        // Separators follow the line equation p_sep(x) = 4(x) + 3 (i.e., every separator occurs every 4 chars, beginning at y-int 3)
         let crates = line.chars().enumerate()
             .filter(|&(i, _)| (i + 1) % 4 != 0)
             .into_iter()
