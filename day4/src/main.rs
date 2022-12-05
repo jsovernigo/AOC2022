@@ -17,6 +17,7 @@ fn main() {
     
     for line in reader.lines() {
         let rline = line.unwrap();
+	//13-18,22-41
         let halves = rline.split(",").collect::<Vec<&str>>();
         let firstindicies = halves[0].split('-').map(|i| i.parse::<u32>().ok().unwrap()).collect::<Vec<u32>>();
         let secondindicies = halves[1].split('-').map(|i| i.parse::<u32>().ok().unwrap()).collect::<Vec<u32>>();
