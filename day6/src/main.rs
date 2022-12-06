@@ -48,18 +48,14 @@ fn main() {
                                 // if this character exists in the history, or
                                 if history.contains(&n) || 
 
-                                        // history contains...
+                                        // history contains any element i
                                         history
                                         .iter()
-
-                                        // any element i
                                         .any(|i| 
                                             
-                                            // that if filtered by
+                                            // that if filtered by, results in more than one result
                                             history.iter()
                                                 .filter(|&o| *o == *i)
-
-                                                // results in more than one result
                                                 .count() > 1) {
 
                                     // get rid of oldest history character and insert the newest.
