@@ -1,12 +1,25 @@
 use std::fs::File;
 use std::io::{BufReader, BufRead};
+use std::collections::{VecDeque, HashMap};
+
+fn is_history_unique(history: &VecDeque<u8>) -> bool {
+    let mut historymap: HashMap<u8, bool> = HashMap::new();
+
+    !history.iter()
+        .any(|c| 
+                match historymap.insert(*c, true) {
+                    Some(_) => true, // i.e. break and return false
+                    None => false, // i.e. do not break
+                }
+            )
+}
 
 fn main() {
     let file = File::open("input.txt").unwrap();
     let reader = BufReader::new(file);
     
     // 4 for start-of-coms markers, 14 for start-of-message
-    let marker_length = 14; 
+    let marker_length = 4; 
 
     // for each line in the coms file (see test.txt)
     for line in reader.lines() {
@@ -18,7 +31,7 @@ fn main() {
             Ok(l) => {
                     let mut i = 0;
                     let mut iter = l.bytes();
-                    let mut history: Vec<u8> = Vec::new();
+                    let mut history: VecDeque<u8> = VecDeque::new();
 
                     // collect the minimum history
                     for _i in 0..(marker_length - 1) {
@@ -27,7 +40,7 @@ fn main() {
 
                             // a new history character
                             Some(n) => {
-                                    history.insert(0, n);
+                                    history.push_back(n);
                                     i += 1
                                 },
 
@@ -46,21 +59,11 @@ fn main() {
                             Some(n) =>
 
                                 // if this character exists in the history, or
-                                if history.contains(&n) || 
-
-                                        // history contains any element i
-                                        history
-                                        .iter()
-                                        .any(|i| 
-                                            
-                                            // that if filtered by, results in more than one result
-                                            history.iter()
-                                                .filter(|&o| *o == *i)
-                                                .count() > 1) {
-
+                                if history.contains(&n) || !is_history_unique(&history) {
+                                    
                                     // get rid of oldest history character and insert the newest.
-                                    history.pop();
-                                    history.insert(0, n);
+                                    history.pop_front();
+                                    history.push_back(n);
                                     i += 1;
 
                                 // i.e. no characters are repeated in history: marker found.
