@@ -1,0 +1,6 @@
+[submodule "RustScanner"]
+	path = RustScanner
+	url = https://github.com/jsovernigo/RustScanner
+[submodule "scanner"]
+	path = scanner
+	url = https://github.com/jsovernigo/scanner
