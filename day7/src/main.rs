@@ -138,6 +138,53 @@ fn get_sum_less_than_100k(current: &Node<Directory>) -> usize {
     less_than_100ksum
 }
 
+fn find_smallest_directory_greater_than_n(current: &Node<Directory>, n: usize) -> Option<(&Node<Directory>, usize)> {
+    
+    // we may need to choose the current directory of our current tree if no child > n
+    let dir_size: usize = get_sum_of_directory(current);
+
+    // base case - can't find a sufficient directory if we are too small.
+    if dir_size < n {
+        return None;
+    }
+
+    // base case - we are a leaf dir, do we have big files?
+    if current.has_no_child() {
+        if dir_size > n {
+            return Some((current, dir_size));
+        } else {
+            return None;
+        }
+
+    }
+
+    // assume we are the smallest until we find a descendant that proves otherwise.
+    let mut smallest_descendant_gt_n = (current, dir_size);
+
+    // for each child in the current directory
+    for child in current.iter() {
+        let (_, smallest_size) = smallest_descendant_gt_n;
+
+        // find the smallest descendant for each child, and
+        match find_smallest_directory_greater_than_n(child, n) {
+
+            // if one exists, 
+            Some((descendant, descendant_size)) =>
+
+                // check if it is smaller than the smallest recorded
+                if descendant_size < smallest_size {
+                    smallest_descendant_gt_n = (descendant, descendant_size);
+                }, 
+
+            // if none exist, we can just continue.
+            None => continue,
+        }
+
+    }
+
+    Some(smallest_descendant_gt_n)
+}
+
 fn main() {
 
     let file = File::open("input.txt").unwrap();
@@ -149,5 +196,25 @@ fn main() {
 
     let ftree = ftree;
     println!("{}", get_sum_less_than_100k(ftree.root()));
+
+    let total_space: usize = 70_000_000;
+    let occupied_space = get_sum_of_directory(ftree.root());
+    let free_space = total_space - occupied_space;
+    let update_size: usize = 30_000_000;
+    let needed_space: usize = update_size - free_space;
+
+    let smallest_descendant_gt_n = 
+        find_smallest_directory_greater_than_n(
+            ftree.root(), 
+            needed_space);
+   
+    match smallest_descendant_gt_n {
+        Some((d, dsize)) => 
+            println!("{}: {}", d.data().name, dsize),
+        
+        None =>
+            println!("No smallest node > n found.")
+    }
+
 
 }
