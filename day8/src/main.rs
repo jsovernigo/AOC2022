@@ -140,6 +140,7 @@ fn main() {
             }
         }
         
+        // then up
         for i in (1..(grove.get_n_rows())).rev() {
             let tree = grove.get(i, j);
             if tree > umax {
@@ -149,7 +150,7 @@ fn main() {
         }
     }
 
-    // then up
+    // finally, count all the entries that are "true"
     for i in 0..grove.get_n_rows() {
         for j in 0..grove.get_n_columns() {
             if visible_grid[i][j] {
