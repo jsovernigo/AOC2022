@@ -1,7 +1,6 @@
 use std::io::{BufReader, BufRead};
 use std::fs::File;
 
-use std::num;
 use std::vec::Vec;
 
 struct Grove (Vec<Vec<u8>>);
@@ -27,11 +26,6 @@ impl Grove {
         assert!(row < self.0.len());
         assert!(column < self.0[row].len());
         self.0[row][column]
-    }
-
-    fn get_perimiter(&self) -> usize {
-        // This assumes a square grove, always.
-        self.0.len() * self.0[0].len()
     }
 
     fn get_n_rows(&self) -> usize {
@@ -85,7 +79,6 @@ fn main() {
 
 
     let mut number_visible_trees = 0;
-    //number_visible_trees += grove.get_perimiter(); // perimiter trees are ALWAYS visible.
 
     let mut visible_grid: Vec<Vec<bool>> = Vec::new();
     for i in 0..grove.get_n_rows() {
@@ -160,5 +153,60 @@ fn main() {
     }
 
     println!("{}", number_visible_trees);
+
+    let mut maxvisibility: usize = 0;
+
+
+    // for each tree
+    for i in 0..grove.get_n_rows() {
+        for j in 0..grove.get_n_columns() {
+
+            let tree = grove.get(i, j);
+
+            let mut up: usize = 0;
+            let mut down: usize = 0;
+            let mut left: usize = 0;
+            let mut right: usize = 0;
+
+            // check up first
+            for k in (0..i).rev() {
+                up += 1;
+                if grove.get(k, j) >= tree {
+                    break;
+                }
+            }
+
+            // then down
+            for k in (i + 1)..grove.get_n_rows() {
+                down += 1;
+                if grove.get(k, j) >= tree {
+                    break;
+                }
+            }
+
+            // then right
+            for k in (j + 1)..grove.get_n_columns() {
+                right += 1;
+                if grove.get(i, k) >= tree {
+                    break;
+                }
+            }
+
+            // then left.
+            for k in (0..j).rev() {
+                left += 1;
+                if grove.get(i, k) >= tree {
+                    break;
+                }
+            }
+            
+            let visibility = up * down * left * right;
+            if visibility > maxvisibility {
+                maxvisibility = visibility;
+            }
+        }
+    }
+
+    println!("Max visibility: {}", maxvisibility);
 
 }
